@@ -1,0 +1,1 @@
+# eth-global-hackmoney2026
