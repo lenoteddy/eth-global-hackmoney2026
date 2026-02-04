@@ -1,12 +1,12 @@
 import { useState, type ReactNode } from "react";
 
-interface Option {
+export interface Option {
 	label: string;
 	value: string;
 	icon: ReactNode;
 }
 
-export default function SelectInput({ placeholder, options, value, onChange }: { placeholder: string; options: Option[]; value: string | null; onChange?: (option: Option) => void }) {
+export default function SelectInput({ placeholder, options, value, onChange }: { placeholder: string; options: Option[]; value: string | undefined; onChange?: (option: Option) => void }) {
 	const selected = options ? options.find((o) => o.value === value) || null : null;
 	const [open, setOpen] = useState(false);
 	const toggle = () => setOpen((o) => !o);
