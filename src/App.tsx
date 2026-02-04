@@ -153,7 +153,7 @@ function App() {
 											You are about to bridge
 											<span className="mx-1 px-1 border rounded-lg inline-flex items-center align-middle">
 												<div className="w-6 h-6">{sourceToken?.icon}</div>
-												{Number(amounts?.source) > 0 && <div className="mx-1 font-bold">{amounts?.source}</div>}
+												{Number(amounts?.source) > 0 && <div className="ml-1 font-bold">{StringHelper.numberFormat(amounts?.source)}</div>}
 												<div className="ml-1">{sourceToken?.label}</div>
 											</span>
 											from
@@ -177,7 +177,7 @@ function App() {
 											{Number(amounts?.destination) > 0 && <span className="px-1">(estimated)</span>}
 											<span className="mx-1 px-1 border rounded-lg inline-flex items-center align-middle">
 												<div className="w-6 h-6">{destinationToken?.icon}</div>
-												{Number(amounts?.destination) > 0 && <div className="mx-1 font-bold">{amounts?.destination}</div>}
+												{Number(amounts?.destination) > 0 && <div className="ml-1 font-bold">{StringHelper.numberFormat(amounts?.destination)}</div>}
 												<div className="ml-1">{destinationToken?.label}</div>
 											</span>
 											in return.
