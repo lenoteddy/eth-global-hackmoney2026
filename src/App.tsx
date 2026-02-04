@@ -3,14 +3,17 @@ import { ConnectKitButton } from "connectkit";
 import { chainList } from "./helpers/Web3Config";
 import StringHelper from "./helpers/StringHelper";
 import SelectInput from "./components/SelectInput";
+import AmountInput from "./components/AmountInput";
 import data from "./constants/chain-data.json";
 import Logo from "./assets/logo.png";
 
 function App() {
 	const [sourceChain, setSourceChain] = useState<string | null>(null);
 	const [sourceToken, setSourceToken] = useState<string | null>(null);
+	const [sourceAmount, setSourceAmount] = useState("");
 	const [destinationChain, setDestinationChain] = useState<string | null>(null);
 	const [destinationToken, setDestinationToken] = useState<string | null>(null);
+	const [destinationAmount, setDestinationAmount] = useState("");
 	const sourceTokenList = () => {
 		const list = sourceChain ? data[sourceChain as keyof typeof data].tokens : [];
 		const newList = list.map((val) => ({
@@ -65,6 +68,9 @@ function App() {
 							<div className="mb-2 relative z-10">
 								<SelectInput placeholder="Choose a token" options={sourceTokenList()} value={sourceToken} onChange={(option) => setSourceToken(option.value)} />
 							</div>
+							<div className="mb-2">
+								<AmountInput value={sourceAmount} onChange={setSourceAmount} />
+							</div>
 						</div>
 					</div>
 					<div className="border rounded-lg p-4 shadow-[.3rem_.3rem_0_0_#000000]">
@@ -75,6 +81,9 @@ function App() {
 							</div>
 							<div className="mb-2 relative z-10">
 								<SelectInput placeholder="Choose a token" options={destinationTokenList()} value={destinationToken} onChange={(option) => setDestinationToken(option.value)} />
+							</div>
+							<div className="mb-2">
+								<AmountInput value={destinationAmount} onChange={setDestinationAmount} />
 							</div>
 						</div>
 					</div>
