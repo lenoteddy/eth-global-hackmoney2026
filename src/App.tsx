@@ -1,3 +1,5 @@
+import { ConnectKitButton } from "connectkit";
+import StringHelper from "./helpers/StringHelper";
 import Logo from "./assets/logo.png";
 
 function App() {
@@ -15,7 +17,15 @@ function App() {
 						</a>
 					</div>
 					<div>
-						<button className="border-2 py-2 px-4 rounded-xl text-sm font-semibold bg-black text-white cursor-pointer">Connect Wallet</button>
+						<ConnectKitButton.Custom>
+							{({ show, isConnected, address }) => {
+								return (
+									<button className="border-2 py-2 px-4 rounded-xl text-sm font-semibold bg-black text-white cursor-pointer" onClick={show}>
+										{isConnected && address ? StringHelper.shortHex(address) : "Connect Wallet"}
+									</button>
+								);
+							}}
+						</ConnectKitButton.Custom>
 					</div>
 				</div>
 			</header>
