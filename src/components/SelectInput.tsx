@@ -41,7 +41,11 @@ export default function SelectInput({ placeholder, options, value, onChange }: {
 							<span>{option.label}</span>
 						</button>
 					))}
-					{options.length == 0 && <div className="px-4 py-2 text-center">Data not found!</div>}
+					{options.length == 0 && (
+						<div className="px-4 py-2 text-center cursor-pointer" onClick={toggle}>
+							Data not found!
+						</div>
+					)}
 				</div>
 			)}
 		</div>
