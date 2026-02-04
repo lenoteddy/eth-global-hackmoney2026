@@ -1,0 +1,62 @@
+{
+	"1": {
+		"name": "Ethereum Mainnet",
+		"tokens": [
+			{
+				"label": "USDC",
+				"value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+				"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/1/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png"
+			},
+			{
+				"label": "USDT",
+				"value": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+				"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/1/0xdac17f958d2ee523a2206206994597c13d831ec7.png"
+			}
+		],
+		"aave": {
+			"pool": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
+			"tokens": [
+				{
+					"label": "Aave Ethereum USDC",
+					"value": "0x98c23e9d8f34fefb1b7bd6a91b7ff122f4e16f5c",
+					"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/1/0x98c23e9d8f34fefb1b7bd6a91b7ff122f4e16f5c.png"
+				},
+				{
+					"label": "Aave Ethereum USDT",
+					"value": "0x23878914efe38d27c4d67ab83ed1b93a74d4086a",
+					"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/1/0x23878914efe38d27c4d67ab83ed1b93a74d4086a.png"
+				}
+			]
+		}
+	},
+	"42161": {
+		"name": "Arbitrum One",
+		"tokens": [
+			{
+				"label": "USDC",
+				"value": "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+				"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/42161/0xaf88d065e77c8cc2239327c5edb3a432268e5831.png"
+			},
+			{
+				"label": "USD₮0",
+				"value": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+				"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/42161/0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png"
+			}
+		],
+		"aave": {
+			"pool": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+			"tokens": [
+				{
+					"label": "Aave Arbitrum USDCn",
+					"value": "0x724dc807b04555b71ed48a6896b6F41593b8C637",
+					"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/42161/0x724dc807b04555b71ed48a6896b6f41593b8c637.png"
+				},
+				{
+					"label": "Aave Arbitrum USDT",
+					"value": "0x6ab707aca953edaefbc4fd23ba73294241490620",
+					"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/42161/0x6ab707aca953edaefbc4fd23ba73294241490620.png"
+				}
+			]
+		}
+	}
+}

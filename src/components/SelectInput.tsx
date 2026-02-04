@@ -7,7 +7,7 @@ interface Option {
 }
 
 export default function SelectInput({ placeholder, options, value, onChange }: { placeholder: string; options: Option[]; value: string | null; onChange?: (option: Option) => void }) {
-	const selected = options.find((o) => o.value === value) || null;
+	const selected = options ? options.find((o) => o.value === value) || null : null;
 	const [open, setOpen] = useState(false);
 	const toggle = () => setOpen((o) => !o);
 	const choose = (option: Option) => {
@@ -41,6 +41,7 @@ export default function SelectInput({ placeholder, options, value, onChange }: {
 							<span>{option.label}</span>
 						</button>
 					))}
+					{options.length == 0 && <div className="px-4 py-2 text-center">Data not found!</div>}
 				</div>
 			)}
 		</div>

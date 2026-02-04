@@ -1,13 +1,32 @@
+import { useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { chainList } from "./helpers/Web3Config";
 import StringHelper from "./helpers/StringHelper";
 import SelectInput from "./components/SelectInput";
+import data from "./constants/chain-data.json";
 import Logo from "./assets/logo.png";
-import { useState } from "react";
 
 function App() {
 	const [sourceChain, setSourceChain] = useState<string | null>(null);
+	const [sourceToken, setSourceToken] = useState<string | null>(null);
 	const [destinationChain, setDestinationChain] = useState<string | null>(null);
+	const [destinationToken, setDestinationToken] = useState<string | null>(null);
+	const sourceTokenList = () => {
+		const list = sourceChain ? data[sourceChain as keyof typeof data].tokens : [];
+		const newList = list.map((val) => ({
+			...val,
+			icon: <img src={val.icon} alt="" />,
+		}));
+		return newList;
+	};
+	const destinationTokenList = () => {
+		const list = destinationChain ? data[destinationChain as keyof typeof data].aave.tokens : [];
+		const newList = list.map((val) => ({
+			...val,
+			icon: <img src={val.icon} alt="" />,
+		}));
+		return newList;
+	};
 
 	return (
 		<div className="container">
@@ -40,16 +59,22 @@ function App() {
 					<div className="border rounded-lg p-4 shadow-[.3rem_.3rem_0_0_#000000]">
 						<h2 className="text-lg font-semibold">📤 Source Chain</h2>
 						<div className="mt-4">
-							<div className="mb-2">
+							<div className="mb-2 relative z-20">
 								<SelectInput placeholder="Choose a network" options={chainList} value={sourceChain} onChange={(option) => setSourceChain(option.value)} />
+							</div>
+							<div className="mb-2 relative z-10">
+								<SelectInput placeholder="Choose a token" options={sourceTokenList()} value={sourceToken} onChange={(option) => setSourceToken(option.value)} />
 							</div>
 						</div>
 					</div>
 					<div className="border rounded-lg p-4 shadow-[.3rem_.3rem_0_0_#000000]">
 						<h2 className="text-lg font-semibold">📥 Destination Chain</h2>
 						<div className="mt-4">
-							<div className="mb-2">
+							<div className="mb-2 relative z-20">
 								<SelectInput placeholder="Choose a network" options={chainList} value={destinationChain} onChange={(option) => setDestinationChain(option.value)} />
+							</div>
+							<div className="mb-2 relative z-10">
+								<SelectInput placeholder="Choose a token" options={destinationTokenList()} value={destinationToken} onChange={(option) => setDestinationToken(option.value)} />
 							</div>
 						</div>
 					</div>
