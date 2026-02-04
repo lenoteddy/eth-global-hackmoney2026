@@ -1,8 +1,14 @@
 import { ConnectKitButton } from "connectkit";
+import { chainList } from "./helpers/Web3Config";
 import StringHelper from "./helpers/StringHelper";
+import SelectInput from "./components/SelectInput";
 import Logo from "./assets/logo.png";
+import { useState } from "react";
 
 function App() {
+	const [sourceChain, setSourceChain] = useState<string | null>(null);
+	const [destinationChain, setDestinationChain] = useState<string | null>(null);
+
 	return (
 		<div className="container">
 			<header>
@@ -29,7 +35,26 @@ function App() {
 					</div>
 				</div>
 			</header>
-			<main></main>
+			<main>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div className="border rounded-lg p-4 shadow-[.3rem_.3rem_0_0_#000000]">
+						<h2 className="text-lg font-semibold">📤 Source Chain</h2>
+						<div className="mt-4">
+							<div className="mb-2">
+								<SelectInput placeholder="Choose a network" options={chainList} value={sourceChain} onChange={(option) => setSourceChain(option.value)} />
+							</div>
+						</div>
+					</div>
+					<div className="border rounded-lg p-4 shadow-[.3rem_.3rem_0_0_#000000]">
+						<h2 className="text-lg font-semibold">📥 Destination Chain</h2>
+						<div className="mt-4">
+							<div className="mb-2">
+								<SelectInput placeholder="Choose a network" options={chainList} value={destinationChain} onChange={(option) => setDestinationChain(option.value)} />
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
 			<footer></footer>
 		</div>
 	);
