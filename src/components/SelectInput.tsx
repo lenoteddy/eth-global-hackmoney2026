@@ -19,7 +19,7 @@ export default function SelectInput({ placeholder, options, value, onChange }: {
 		<div className="relative">
 			<button
 				onClick={toggle}
-				className="w-full flex items-center justify-between rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm shadow-sm hover:border-black focus:outline-none focus:ring-1 focus:ring-black"
+				className="w-full flex items-center justify-between rounded-xl border border-gray-300 bg-white px-4 py-2 shadow-sm hover:border-black focus:outline-none focus:ring-1 focus:ring-black"
 			>
 				{selected ? (
 					<div className="flex items-center gap-2">
@@ -36,7 +36,7 @@ export default function SelectInput({ placeholder, options, value, onChange }: {
 			{open && (
 				<div className="absolute z-10 mt-2 w-full overflow-hidden rounded-xl border bg-white shadow-lg">
 					{options.map((option) => (
-						<button key={option.value} onClick={() => choose(option)} className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100">
+						<button key={option.value} onClick={() => choose(option)} className="flex w-full items-center gap-3 px-4 py-2 hover:bg-gray-100">
 							{option.icon && <span className="w-6 h-6 flex items-center justify-center">{option.icon}</span>}
 							<span>{option.label}</span>
 						</button>
