@@ -16,12 +16,15 @@ function App() {
 	const [destinationAmount, setDestinationAmount] = useState("");
 	const [protocol, setProtocol] = useState<string>("aave");
 	const protocolList = () => {
-		const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
+		/* const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
 		const newList = list.map((val) => ({
 			...val,
 			icon: <img src={val.icon} alt="" />,
 		}));
-		return newList;
+		return newList; */
+		// Set "Aave Protocol" as default, in the future can make it dynamic if it supports more protocol
+		const list = [{ label: "Aave", value: "aave", icon: <img src={"https://cryptologos.cc/logos/aave-aave-logo.png"} alt="" /> }];
+		return list;
 	};
 	const sourceTokenList = () => {
 		const list = sourceChain ? data[sourceChain as keyof typeof data].tokens : [];
