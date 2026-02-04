@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ConnectKitButton } from "connectkit";
-import { chainList } from "./helpers/Web3Config";
 import StringHelper from "./helpers/StringHelper";
+import { chainList } from "./helpers/Web3Config";
 import SelectInput from "./components/SelectInput";
 import AmountInput from "./components/AmountInput";
 import data from "./constants/chain-data.json";
@@ -10,10 +10,9 @@ import Logo from "./assets/logo.png";
 function App() {
 	const [sourceChain, setSourceChain] = useState<string | null>(null);
 	const [sourceToken, setSourceToken] = useState<string | null>(null);
-	const [sourceAmount, setSourceAmount] = useState("");
 	const [destinationChain, setDestinationChain] = useState<string | null>(null);
 	const [destinationToken, setDestinationToken] = useState<string | null>(null);
-	const [destinationAmount, setDestinationAmount] = useState("");
+	const [amounts, setAmounts] = useState({ source: "0", destination: "0" });
 	const [protocol, setProtocol] = useState<string>("aave");
 	const protocolList = () => {
 		/* const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
@@ -41,6 +40,12 @@ function App() {
 			icon: <img src={val.icon} alt="" />,
 		}));
 		return newList;
+	};
+	const handleAmountChange = (key: string, value: string) => {
+		setAmounts((prev) => ({
+			source: key === "source" ? value : value ? "0" : prev.source,
+			destination: key === "destination" ? value : value ? "0" : prev.destination,
+		}));
 	};
 
 	return (
@@ -75,13 +80,17 @@ function App() {
 						<h2 className="text-lg font-semibold">📤 Source Chain</h2>
 						<div className="mt-4">
 							<div className="mb-2 relative z-20">
+								<label className="font-semibold">Source network</label>
 								<SelectInput placeholder="Choose a network" options={chainList} value={sourceChain} onChange={(option) => setSourceChain(option.value)} />
 							</div>
 							<div className="mb-2 relative z-10">
+								<label className="font-semibold">Source token</label>
 								<SelectInput placeholder="Choose a token" options={sourceTokenList()} value={sourceToken} onChange={(option) => setSourceToken(option.value)} />
 							</div>
 							<div className="mb-2">
-								<AmountInput value={sourceAmount} onChange={setSourceAmount} />
+								<label className="font-semibold">You send</label>
+								<AmountInput value={amounts.source} onChange={(v) => handleAmountChange("source", v)} />
+								<p className="text-sm italic">*enter either amount. The other will be calculated automatically.</p>
 							</div>
 						</div>
 					</div>
@@ -89,18 +98,23 @@ function App() {
 						<h2 className="text-lg font-semibold">📥 Destination Chain</h2>
 						<div className="mt-4">
 							<div className="mb-2 relative z-20">
+								<label className="font-semibold">Destination network</label>
 								<SelectInput placeholder="Choose a network" options={chainList} value={destinationChain} onChange={(option) => setDestinationChain(option.value)} />
 							</div>
 							<div className="mb-2 flex items-center gap-x-2">
 								<div className="relative z-10 w-60">
+									<label className="font-semibold">DeFi Protocol</label>
 									<SelectInput placeholder="Protocol" options={protocolList()} value={protocol} onChange={(option) => setProtocol(option.value)} />
 								</div>
 								<div className="relative z-10 w-full">
+									<label className="font-semibold">Destination token</label>
 									<SelectInput placeholder="Choose a token" options={destinationTokenList()} value={destinationToken} onChange={(option) => setDestinationToken(option.value)} />
 								</div>
 							</div>
 							<div className="mb-2">
-								<AmountInput value={destinationAmount} onChange={setDestinationAmount} />
+								<label className="font-semibold">You receive (estimated)</label>
+								<AmountInput value={amounts.destination} onChange={(v) => handleAmountChange("destination", v)} />
+								<p className="text-sm italic">*enter either amount. The other will be calculated automatically.</p>
 							</div>
 						</div>
 					</div>

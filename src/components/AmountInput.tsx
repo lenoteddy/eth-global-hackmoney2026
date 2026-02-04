@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
 	value?: string;
@@ -29,6 +29,11 @@ export default function AmountInput({ value = "", onChange, placeholder }: Props
 		setDisplay(format(cleaned));
 		onChange?.(cleaned);
 	}
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		setDisplay(format(value));
+	}, [value]);
 
 	return (
 		<input
