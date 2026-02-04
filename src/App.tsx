@@ -14,6 +14,15 @@ function App() {
 	const [destinationChain, setDestinationChain] = useState<string | null>(null);
 	const [destinationToken, setDestinationToken] = useState<string | null>(null);
 	const [destinationAmount, setDestinationAmount] = useState("");
+	const [protocol, setProtocol] = useState<string>("aave");
+	const protocolList = () => {
+		const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
+		const newList = list.map((val) => ({
+			...val,
+			icon: <img src={val.icon} alt="" />,
+		}));
+		return newList;
+	};
 	const sourceTokenList = () => {
 		const list = sourceChain ? data[sourceChain as keyof typeof data].tokens : [];
 		const newList = list.map((val) => ({
@@ -79,8 +88,13 @@ function App() {
 							<div className="mb-2 relative z-20">
 								<SelectInput placeholder="Choose a network" options={chainList} value={destinationChain} onChange={(option) => setDestinationChain(option.value)} />
 							</div>
-							<div className="mb-2 relative z-10">
-								<SelectInput placeholder="Choose a token" options={destinationTokenList()} value={destinationToken} onChange={(option) => setDestinationToken(option.value)} />
+							<div className="mb-2 flex items-center gap-x-2">
+								<div className="relative z-10 w-60">
+									<SelectInput placeholder="Protocol" options={protocolList()} value={protocol} onChange={(option) => setProtocol(option.value)} />
+								</div>
+								<div className="relative z-10 w-full">
+									<SelectInput placeholder="Choose a token" options={destinationTokenList()} value={destinationToken} onChange={(option) => setDestinationToken(option.value)} />
+								</div>
 							</div>
 							<div className="mb-2">
 								<AmountInput value={destinationAmount} onChange={setDestinationAmount} />

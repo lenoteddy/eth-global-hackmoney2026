@@ -13,6 +13,13 @@
 				"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/1/0xdac17f958d2ee523a2206206994597c13d831ec7.png"
 			}
 		],
+		"protocols": [
+			{
+				"label": "Aave",
+				"value": "aave",
+				"icon": "https://cryptologos.cc/logos/aave-aave-logo.png"
+			}
+		],
 		"aave": {
 			"pool": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
 			"tokens": [
@@ -41,6 +48,13 @@
 				"label": "USD₮0",
 				"value": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
 				"icon": "https://static.cx.metamask.io/api/v1/tokenIcons/42161/0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png"
+			}
+		],
+		"protocols": [
+			{
+				"label": "Aave",
+				"value": "aave",
+				"icon": "https://cryptologos.cc/logos/aave-aave-logo.png"
 			}
 		],
 		"aave": {
