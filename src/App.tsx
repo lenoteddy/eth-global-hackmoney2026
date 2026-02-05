@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { ConnectKitButton } from "connectkit";
+import { useConnection } from "wagmi";
 import StringHelper from "./helpers/StringHelper";
 import { chainList } from "./helpers/Web3Config";
+import { executeLiFiContractCalls } from "./helpers/Web3Helper";
 import SelectInput, { type Option } from "./components/SelectInput";
 import AmountInput from "./components/AmountInput";
 import data from "./constants/chain-data.json";
 import Logo from "./assets/logo.png";
 
 function App() {
+	const { address } = useConnection();
 	const [menu, setMenu] = useState<string>("CONFIRM");
 	const [sourceChain, setSourceChain] = useState<Option | null>(null);
 	const [sourceToken, setSourceToken] = useState<Option | null>(null);
@@ -47,6 +50,36 @@ function App() {
 			source: key === "source" ? value : value ? "0" : prev.source,
 			destination: key === "destination" ? value : value ? "0" : prev.destination,
 		}));
+	};
+	const submitTx = async () => {
+		if (!sourceChain || !destinationChain || !sourceToken || !destinationToken) {
+			alert("Please choose network & token from source chain and destination chain!");
+			return;
+		}
+
+		if (Number(amounts.source) <= 0 && Number(amounts.destination) <= 0) {
+			alert("Please complete the inputs!");
+			return;
+		}
+
+		const fromTokenData = data[sourceChain.value as keyof typeof data].tokens.find((item: { label: string; value: string; icon: string; decimals: number }) => item.value === sourceToken.value);
+		const toTokenData = data[destinationChain.value as keyof typeof data].aave.tokens.find(
+			(item: { label: string; value: string; icon: string; decimals: number; underlying: string }) => item.value === destinationToken.value,
+		);
+		const fromAmount = Number(amounts.source) * 10 ** Number(fromTokenData?.decimals);
+		const toAmount = Number(amounts.destination) * 10 ** Number(toTokenData?.decimals);
+
+		await executeLiFiContractCalls({
+			fromAddress: String(address),
+			toAddress: String(address),
+			fromChain: String(sourceChain.value),
+			toChain: String(destinationChain.value),
+			fromToken: String(sourceToken.value),
+			toToken: String(toTokenData?.underlying),
+			fromAmount: String(fromAmount),
+			toAmount: String(toAmount),
+			protocol: protocol,
+		});
 	};
 
 	return (
@@ -149,7 +182,7 @@ function App() {
 									<div className="my-4 text-center font-semibold">Please fill in the input on source chain and destination chain!</div>
 								) : (
 									<>
-										<p className="leading-8">
+										<div className="leading-8">
 											You are about to bridge
 											<span className="mx-1 px-1 border rounded-lg inline-flex items-center align-middle">
 												<div className="w-6 h-6">{sourceToken?.icon}</div>
@@ -181,9 +214,11 @@ function App() {
 												<div className="ml-1">{destinationToken?.label}</div>
 											</span>
 											in return.
-										</p>
+										</div>
 										<div className="mt-2 text-center">
-											<button className="min-w-50 border-2 py-2 px-4 rounded-xl font-semibold bg-black text-white cursor-pointer">Submit Transaction</button>
+											<button className="min-w-50 border-2 py-2 px-4 rounded-xl font-semibold bg-black text-white cursor-pointer" onClick={submitTx}>
+												Submit Transaction
+											</button>
 										</div>
 									</>
 								)}
