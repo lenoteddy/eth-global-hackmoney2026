@@ -191,7 +191,7 @@ function App() {
 								<div className="mb-1 flex items-center justify-between">
 									<label className="font-semibold">Destination address</label>
 									<button
-										className={"border-2 px-4 rounded-xl font-semibold cursor-pointer " + (sameReceiver ? "bg-white text-black" : "bg-black text-white")}
+										className={"px-3 py-1 text-sm rounded-lg font-medium transition " + (sameReceiver ? "bg-gray-100 text-gray-700" : "bg-black text-white")}
 										onClick={() => {
 											setSameReceiver(!sameReceiver);
 											setReceiverAddress("");
