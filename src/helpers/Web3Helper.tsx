@@ -61,7 +61,6 @@ export const executeLiFiContractCalls = async ({
 	protocol: string;
 }) => {
 	const client = await getWalletClient(wagmiConfig);
-	await client.switchChain({ id: Number(fromChain) });
 
 	// init protocol data
 	const protocolData = data[toChain as keyof typeof data][protocol as keyof (typeof data)[keyof typeof data]];

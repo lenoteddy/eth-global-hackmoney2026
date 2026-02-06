@@ -3,16 +3,17 @@ import { ConnectKitButton } from "connectkit";
 import { isAddress } from "viem";
 import { useConnection } from "wagmi";
 import StringHelper from "./helpers/StringHelper";
-import { chainList } from "./helpers/Web3Config";
+import { chainList, wagmiConfig } from "./helpers/Web3Config";
 import { executeLiFiContractCalls } from "./helpers/Web3Helper";
 import SelectInput, { type Option } from "./components/SelectInput";
 import AmountInput from "./components/AmountInput";
 import { AddressInput } from "./components/AddressInput";
 import data from "./constants/chain-data.json";
 import Logo from "./assets/logo.png";
+import { getWalletClient } from "wagmi/actions";
 
 function App() {
-	const { address } = useConnection();
+	const { address, chainId } = useConnection();
 	const [menu, setMenu] = useState<string>("CONFIRM");
 	const [sourceChain, setSourceChain] = useState<Option | null>(null);
 	const [sourceToken, setSourceToken] = useState<Option | null>(null);
@@ -54,6 +55,10 @@ function App() {
 			source: key === "source" ? value : value ? "0" : prev.source,
 			destination: key === "destination" ? value : value ? "0" : prev.destination,
 		}));
+	};
+	const switchChain = async () => {
+		const client = await getWalletClient(wagmiConfig);
+		await client.switchChain({ id: Number(sourceChain?.value) });
 	};
 	const submitTx = async () => {
 		if (!sourceChain || !destinationChain || !sourceToken || !destinationToken) {
@@ -246,8 +251,11 @@ function App() {
 											<div className="py-1 px-2 border rounded-lg">{isAddress(receiverAddress) ? receiverAddress : address}</div>
 										</div>
 										<div className="mt-2 text-center">
-											<button className="min-w-50 border-2 py-2 px-4 rounded-xl font-semibold bg-black text-white cursor-pointer" onClick={submitTx}>
-												Submit Transaction
+											<button
+												className="min-w-50 border-2 py-2 px-4 rounded-xl font-semibold bg-black text-white cursor-pointer"
+												onClick={Number(sourceChain.value) != Number(chainId) ? switchChain : submitTx}
+											>
+												{Number(sourceChain.value) != Number(chainId) ? "Switch Chain" : "Submit Transaction"}
 											</button>
 										</div>
 									</>
