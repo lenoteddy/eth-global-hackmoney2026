@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { isAddress, type Address } from "viem";
 import { useConnection } from "wagmi";
+import { getWalletClient } from "wagmi/actions";
 import StringHelper from "./helpers/StringHelper";
 import { chainList, wagmiConfig } from "./helpers/Web3Config";
 import { executeLiFiContractCalls, getTokenBalance } from "./helpers/Web3Helper";
@@ -10,7 +11,10 @@ import AmountInput from "./components/AmountInput";
 import { AddressInput } from "./components/AddressInput";
 import data from "./constants/chain-data.json";
 import Logo from "./assets/logo.png";
-import { getWalletClient } from "wagmi/actions";
+import LogoETHGlobal from "./assets/partner-eth-global.svg";
+import LogoLIFI from "./assets/partner-lifi.svg";
+import LogoENS from "./assets/partner-ens.svg";
+import LogoAave from "./assets/partner-aave.svg";
 
 function App() {
 	const { address, chainId } = useConnection();
@@ -106,7 +110,7 @@ function App() {
 						<a href="#" className="flex items-center">
 							<img src={Logo} alt="logo" className="w-28" />
 							<div className="ml-1">
-								<h1 className="text-xl leading-5 font-semibold">Omni Deposit</h1>
+								<h1 className="text-xl leading-5 font-semibold">OmniDeposit</h1>
 								<p className="text-xs leading-5 font-light">Seamless Cross-Chain Asset Deposits</p>
 							</div>
 						</a>
@@ -293,7 +297,32 @@ function App() {
 					</div>
 				</div>
 			</main>
-			<footer></footer>
+			<footer className="border-t border-gray-200 mt-8">
+				<div className="max-w-6xl mx-auto p-6">
+					<div className="mb-8">
+						<h2 className="text-xl font-semibold">OmniDeposit</h2>
+						<p className="mt-3 text-sm text-gray-600 max-w-xl leading-relaxed">
+							Seamlessly deposit assets from a source chain into DeFi protocols on a destination chain — abstracting bridging and deposit into a single flow.
+						</p>
+					</div>
+					<div className="mb-8">
+						<h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-6">Core Integrations</h3>
+						<div className="flex items-center gap-10 opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition">
+							<img src={LogoLIFI} alt="LI.FI" className="h-8" />
+							<img src={LogoENS} alt="ENS" className="h-8" />
+							<img src={LogoAave} alt="Aave" className="h-5" />
+						</div>
+					</div>
+					<div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between text-xs text-gray-500">
+						<span className="flex items-center">
+							<div>Built for</div>
+							<img src={LogoETHGlobal} alt="ETH Global" className="h-4 mx-1" />
+							<div>- HackMoney 2026</div>
+						</span>
+						<span>© {new Date().getFullYear()} OmniDeposit</span>
+					</div>
+				</div>
+			</footer>
 		</div>
 	);
 }
