@@ -167,7 +167,7 @@ function App() {
 										className={"border-2 px-4 rounded-xl font-semibold cursor-pointer " + (sameReceiver ? "bg-white text-black" : "bg-black text-white")}
 										onClick={() => {
 											setSameReceiver(!sameReceiver);
-											if (sameReceiver) setReceiverAddress("");
+											setReceiverAddress("");
 										}}
 									>
 										Change
