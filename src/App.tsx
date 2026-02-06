@@ -20,6 +20,7 @@ function App() {
 	const [destinationToken, setDestinationToken] = useState<Option | null>(null);
 	const [amounts, setAmounts] = useState({ source: "0", destination: "0" });
 	const [protocol, setProtocol] = useState<string>("aave");
+	const [sameReceiver, setSameReceiver] = useState<boolean>(true);
 	const [receiverAddress, setReceiverAddress] = useState<string>("");
 	const protocolList = () => {
 		/* const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
@@ -155,8 +156,25 @@ function App() {
 								<p className="text-sm italic">*enter either amount. The other will be calculated automatically.</p>
 							</div>
 							<div className="mb-2">
-								<label className="font-semibold">Destination address</label>
-								<AddressInput network={destinationChain?.value ? Number(destinationChain?.value) : 1} value={receiverAddress} onChange={setReceiverAddress} />
+								<div className="mb-1 flex items-center justify-between">
+									<label className="font-semibold">Destination address</label>
+									<button
+										className={"border-2 px-4 rounded-xl font-semibold cursor-pointer " + (sameReceiver ? "bg-white text-black" : "bg-black text-white")}
+										onClick={() => {
+											setSameReceiver(!sameReceiver);
+											if (sameReceiver) setReceiverAddress("");
+										}}
+									>
+										Change
+									</button>
+								</div>
+								{sameReceiver ? (
+									<div className="w-full h-10 flex items-center justify-between rounded-xl border border-gray-300 bg-gray-100 px-4 py-2 shadow-sm text-sm hover:border-black focus:outline-none focus:ring-1 focus:ring-black transition">
+										{address}
+									</div>
+								) : (
+									<AddressInput network={destinationChain?.value ? Number(destinationChain?.value) : 1} value={receiverAddress} onChange={setReceiverAddress} />
+								)}
 							</div>
 						</div>
 					</div>
@@ -222,6 +240,10 @@ function App() {
 												<div className="ml-1">{destinationToken?.label}</div>
 											</span>
 											in return.
+										</div>
+										<div className="mt-2 flex items-center">
+											<div className="font-semibold mr-1">Receiver Address:</div>
+											<div className="py-1 px-2 border rounded-lg">{isAddress(receiverAddress) ? receiverAddress : address}</div>
 										</div>
 										<div className="mt-2 text-center">
 											<button className="min-w-50 border-2 py-2 px-4 rounded-xl font-semibold bg-black text-white cursor-pointer" onClick={submitTx}>
