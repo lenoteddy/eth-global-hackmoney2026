@@ -87,10 +87,7 @@ export const executeLiFiContractCalls = async ({
 			contractCalls: protocolContractCalls,
 		};
 		const contractCallQuote = await getContractCallsQuote(contractCallsQuoteRequest);
-		console.log("Contract Calls Quote:", contractCallQuote);
-
 		if (!contractCallQuote.transactionRequest) throw new Error("No transactionRequest");
-		console.log(contractCallQuote.transactionRequest);
 
 		await setTokenAllowance({
 			walletClient: client,
@@ -106,8 +103,6 @@ export const executeLiFiContractCalls = async ({
 			chainId: fromChain,
 		};
 		const transaction = await client.sendTransaction(tx);
-		console.log("Transaction:", transaction);
-
 		return { status: "success", transactionHash: transaction };
 	} catch (e) {
 		console.error(e);
