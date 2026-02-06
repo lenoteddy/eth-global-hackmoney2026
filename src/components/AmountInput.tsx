@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 
 type Props = {
+	max?: string;
 	value?: string;
 	onChange?: (raw: string) => void;
 	placeholder?: string;
 };
 
-export default function AmountInput({ value = "", onChange, placeholder }: Props) {
+export default function AmountInput({ max, value = "", onChange, placeholder }: Props) {
 	const [display, setDisplay] = useState(format(value));
 
 	function format(val: string) {
@@ -14,6 +15,10 @@ export default function AmountInput({ value = "", onChange, placeholder }: Props
 		const [int, dec] = val.split(".");
 		const intFormatted = Number(int).toLocaleString();
 		return dec !== undefined ? `${intFormatted}.${dec}` : intFormatted;
+	}
+
+	function isGreater(a: string, b: string) {
+		return Number(a) > Number(b);
 	}
 
 	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -25,6 +30,12 @@ export default function AmountInput({ value = "", onChange, placeholder }: Props
 
 		// prevent multiple decimals
 		if (parts.length > 2) return;
+
+		if (max && cleaned && isGreater(cleaned, max)) {
+			setDisplay(format(max));
+			onChange?.(max);
+			return;
+		}
 
 		setDisplay(format(cleaned));
 		onChange?.(cleaned);

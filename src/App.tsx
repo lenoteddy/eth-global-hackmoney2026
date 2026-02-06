@@ -147,7 +147,7 @@ function App() {
 							</div>
 							<div className="mb-2">
 								<label className="font-semibold">You send</label>
-								<AmountInput value={amounts.source} onChange={(v) => handleAmountChange("source", v)} />
+								<AmountInput max={sourceBalance} value={amounts.source} onChange={(v) => handleAmountChange("source", v)} />
 								<div className="text-sm font-semibold">Wallet Balance: {sourceBalance}</div>
 								<p className="text-sm italic">*enter either amount. The other will be calculated automatically.</p>
 							</div>
