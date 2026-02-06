@@ -393,7 +393,7 @@ function App() {
 						</button>
 					</div>
 					<div className="border rounded-tl-none rounded-lg p-4 shadow-[.3rem_.3rem_0_0_#000000]">
-						{!isConnected && (
+						{!isConnected && menu === "CONFIRM" && (
 							<div className="p-8 text-center">
 								<div className="text-lg font-semibold">Please connect your wallet</div>
 								<ConnectKitButton.Custom>
@@ -481,7 +481,7 @@ function App() {
 								)}
 							</div>
 						)}
-						{isConnected && menu === "HISTORY" && (
+						{menu === "HISTORY" && (
 							<div>
 								<div className="mb-2">
 									<h3 className="mb-2 text-xl font-semibold">Check Transaction</h3>
