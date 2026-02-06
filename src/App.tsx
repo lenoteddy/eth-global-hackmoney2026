@@ -125,7 +125,15 @@ function App() {
 						<div className="mt-4">
 							<div className="mb-2 relative z-20">
 								<label className="font-semibold">Source network</label>
-								<SelectInput placeholder="Choose a network" options={chainList} value={sourceChain?.value} onChange={(option) => setSourceChain(option)} />
+								<SelectInput
+									placeholder="Choose a network"
+									options={chainList}
+									value={sourceChain?.value}
+									onChange={(option) => {
+										setSourceChain(option);
+										setSourceToken(null);
+									}}
+								/>
 							</div>
 							<div className="mb-2 relative z-10">
 								<label className="font-semibold">Source token</label>
@@ -143,7 +151,15 @@ function App() {
 						<div className="mt-4">
 							<div className="mb-2 relative z-20">
 								<label className="font-semibold">Destination network</label>
-								<SelectInput placeholder="Choose a network" options={chainList} value={destinationChain?.value} onChange={(option) => setDestinationChain(option)} />
+								<SelectInput
+									placeholder="Choose a network"
+									options={chainList}
+									value={destinationChain?.value}
+									onChange={(option) => {
+										setDestinationChain(option);
+										setDestinationToken(null);
+									}}
+								/>
 							</div>
 							<div className="mb-2 flex items-center gap-x-2">
 								<div className="relative z-10 w-60">
