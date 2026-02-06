@@ -6,7 +6,7 @@ import { getWalletClient } from "wagmi/actions";
 import { useDebounce } from "./hooks/useDebouncer";
 import StringHelper from "./helpers/StringHelper";
 import { chainList, wagmiConfig } from "./helpers/Web3Config";
-import { checkLiFiTransaction, executeLiFiContractCalls, getTokenBalance } from "./helpers/Web3Helper";
+import { checkLiFiTransaction, executeLiFiContractCalls, getENSName, getTokenBalance } from "./helpers/Web3Helper";
 import SelectInput, { type Option } from "./components/SelectInput";
 import AmountInput from "./components/AmountInput";
 import { AddressInput } from "./components/AddressInput";
@@ -137,6 +137,24 @@ function App() {
 		loadData();
 	}, [debounceSearchTxHash]);
 
+	const [receiverENSName, setReceiverENSName] = useState<string | null>(null);
+	const [receiverENSAvatar, setReceiverENSAvatar] = useState<string | null>(null);
+	useEffect(() => {
+		if (!receiverAddress) return;
+		let cancelled = false;
+		async function fetchEns() {
+			const ensResult = await getENSName(Number(destinationChain?.value), String(receiverAddress));
+			if (!cancelled) {
+				setReceiverENSName(ensResult?.name ?? null);
+				setReceiverENSAvatar(ensResult?.avatarUrl ?? null);
+			}
+		}
+		fetchEns();
+		return () => {
+			cancelled = true;
+		};
+	}, [receiverAddress, destinationChain?.value]);
+
 	return (
 		<div className="container">
 			<header>
@@ -230,6 +248,8 @@ function App() {
 										onClick={() => {
 											setSameReceiver(!sameReceiver);
 											setReceiverAddress("");
+											setReceiverENSName(null);
+											setReceiverENSAvatar(null);
 										}}
 									>
 										{sameReceiver ? "Use Different Address" : "Use Wallet Address"}
@@ -324,7 +344,16 @@ function App() {
 										</div>
 										<div className="mt-2 flex items-center">
 											<div className="font-semibold mr-1">Receiver Address:</div>
-											<div className="py-1 px-2 border rounded-lg">{isAddress(receiverAddress) ? receiverAddress : address}</div>
+											<div className="py-1 px-2 border rounded-lg flex items-center">
+												{receiverENSName && (
+													<div className="relative flex items-center">
+														{receiverENSAvatar && <img src={receiverENSAvatar} alt="ENS avatar" className="w-6 h-6 rounded-full" />}
+														<div className="mx-1 font-semibold">{receiverENSName}</div>
+														<div className="mr-1">:</div>
+													</div>
+												)}
+												<div>{isAddress(receiverAddress) ? receiverAddress : address}</div>
+											</div>
 										</div>
 										<div className="mt-2 text-center">
 											{txError && <p className="text-sm text-red-500 font-medium italic mb-1">{txError}</p>}

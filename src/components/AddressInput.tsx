@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { isAddress, getAddress } from "viem";
 import { usePublicClient } from "wagmi";
+import { getEnsAddress, getENSName } from "../helpers/Web3Helper";
 
 type Props = {
 	network: number;
@@ -38,36 +39,27 @@ export function AddressInput({ network = 1, value, onChange }: Props) {
 					const checksummed = getAddress(val);
 					setResolvedAddress(checksummed);
 					onChange(checksummed);
-					// reverse ENS
-					const name = await publicClient?.getEnsName({
-						address: checksummed,
-					});
-					if (name) {
-						setEnsName(name);
-						const avatarUrl = await publicClient?.getEnsAvatar({
-							name,
-						});
-						if (avatarUrl) setAvatar(avatarUrl);
+					// ENS reverse resolution
+					const ensData = await getENSName(network, checksummed);
+					if (ensData) {
+						setEnsName(ensData.name);
+						setAvatar(ensData.avatarUrl);
 					}
 					return;
 				}
 				// 2️⃣ ENS name
 				if (val.endsWith(".eth")) {
-					const address = await publicClient?.getEnsAddress({
-						name: val,
-					});
-					if (!address) {
+					// ENS forward resolution
+					const ensData = await getEnsAddress(network, val);
+					if (!ensData || !ensData.address) {
 						setError("ENS not found");
 						return;
 					}
-					const checksummed = getAddress(address);
+					const checksummed = getAddress(ensData.address);
 					setResolvedAddress(checksummed);
 					setEnsName(val);
 					onChange(checksummed);
-					const avatarUrl = await publicClient?.getEnsAvatar({
-						name: val,
-					});
-					if (avatarUrl) setAvatar(avatarUrl);
+					if (ensData.avatarUrl) setAvatar(ensData.avatarUrl);
 					return;
 				}
 				setError("Invalid address or ENS");
@@ -81,7 +73,7 @@ export function AddressInput({ network = 1, value, onChange }: Props) {
 			resolveInput(inputValue);
 		}, 400);
 		return () => clearTimeout(timeout);
-	}, [inputValue, publicClient, onChange]);
+	}, [network, inputValue, publicClient, onChange]);
 
 	return (
 		<div className="space-y-2">

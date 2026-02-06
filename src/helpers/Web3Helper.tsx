@@ -1,7 +1,6 @@
 import axios from "axios";
 import { getContractCallsQuote, setTokenAllowance } from "@lifi/sdk";
-import { encodeFunctionData, erc20Abi, formatUnits } from "viem";
-import type { Address } from "viem";
+import { encodeFunctionData, erc20Abi, formatUnits, isAddress, type Address } from "viem";
 import { getPublicClient, getWalletClient } from "wagmi/actions";
 import { wagmiConfig } from "./Web3Config";
 import aaveABI from "../constants/aave-abi.json";
@@ -138,4 +137,30 @@ export async function getTokenBalance(userAddress: Address, tokenAddress: Addres
 		}),
 	]);
 	return formatUnits(balance, decimals);
+}
+
+// ENS reverse resolution
+export async function getENSName(chainId: number, address: string) {
+	if (!isAddress(address)) return null;
+	const publicClient = getPublicClient(wagmiConfig, { chainId });
+	const name = await publicClient?.getEnsName({ address: address as Address });
+	const avatarUrl = name ? await publicClient?.getEnsAvatar({ name }) : undefined;
+
+	return {
+		name: name || null,
+		avatarUrl: avatarUrl || null,
+	};
+}
+
+// ENS forward resolution
+export async function getEnsAddress(chainId: number, name: string) {
+	const publicClient = getPublicClient(wagmiConfig, { chainId });
+	const address = await publicClient?.getEnsAddress({ name });
+	if (!address) return null;
+	const avatarUrl = name ? await publicClient?.getEnsAvatar({ name }) : undefined;
+
+	return {
+		address: address || null,
+		avatarUrl: avatarUrl || null,
+	};
 }
