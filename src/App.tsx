@@ -4,6 +4,7 @@ import { isAddress, type Address } from "viem";
 import { useChains, useConnection } from "wagmi";
 import { getWalletClient } from "wagmi/actions";
 import { useDebounce } from "./hooks/useDebouncer";
+import { useTxStorage } from "./hooks/useTxStorage";
 import StringHelper from "./helpers/StringHelper";
 import { chainList, wagmiConfig } from "./helpers/Web3Config";
 import { checkLiFiTransaction, executeLiFiContractCalls, getENSName, getTokenBalance } from "./helpers/Web3Helper";
@@ -17,6 +18,44 @@ import LogoETHGlobal from "./assets/partner-eth-global.svg";
 import LogoLIFI from "./assets/partner-lifi.svg";
 import LogoENS from "./assets/partner-ens.svg";
 import LogoAave from "./assets/partner-aave.svg";
+
+const TxItem = ({ hash }: { hash: string }) => {
+	const [txData, setTxData] = useState<TxInfoProps | null>(null);
+	const [txError, setTxError] = useState<string | null>(null);
+
+	const loadData = async () => {
+		try {
+			if (txData) {
+				setTxData(null);
+				return;
+			}
+			const data = await checkLiFiTransaction({ txHash: hash });
+			if (data.transactionId) {
+				setTxData(data);
+				setTxError(null);
+			} else {
+				setTxData(null);
+				setTxError(data.message || "Transaction not found");
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
+	return (
+		<div className="p-2 border rounded-2xl">
+			<div className="px-4 text-sm font-semibold cursor-pointer" onClick={loadData}>
+				{hash}
+			</div>
+			{txError && <p className="text-sm text-red-500 font-medium italic">{txError}</p>}
+			{txData && (
+				<div className="-m-2.25 mt-2 fade-in">
+					<TxInfo {...txData} />
+				</div>
+			)}
+		</div>
+	);
+};
 
 function App() {
 	const chains = useChains();
@@ -41,6 +80,7 @@ function App() {
 	const [searchTxData, setSearchTxData] = useState<TxInfoProps | null>(null);
 	const [searchTxError, setSearchTxError] = useState<string | null>(null);
 	const debounceSearchTxHash = useDebounce(searchTxHash, 500);
+	const { hashes, addHash, clear } = useTxStorage(String(address));
 
 	const protocolList = () => {
 		/* const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
@@ -120,6 +160,7 @@ function App() {
 			return;
 		}
 
+		if (result.transactionHash) addHash(result.transactionHash);
 		setTxSuccess(result.message);
 		setTxHash(result.transactionHash || null);
 		setTxLink(`${chains.find((c) => c.id === Number(sourceChain.value))?.blockExplorers?.default?.url}/tx/${result.transactionHash}`);
@@ -454,6 +495,21 @@ function App() {
 								{searchTxData && (
 									<div className="fade-in">
 										<TxInfo {...searchTxData} />
+									</div>
+								)}
+								{isConnected && hashes.length > 0 && (
+									<div className="mt-4">
+										<div className="flex items-center justify-between mb-2">
+											<h3 className="text-xl font-semibold">Transaction History</h3>
+											<button className="text-sm text-red-500 underline cursor-pointer" onClick={() => clear()}>
+												Clear All
+											</button>
+										</div>
+										<div className="space-y-2">
+											{hashes.map((hash: string, key: number) => (
+												<TxItem key={key} hash={hash} />
+											))}
+										</div>
 									</div>
 								)}
 							</div>

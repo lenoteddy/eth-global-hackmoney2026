@@ -138,7 +138,7 @@ export default function TxInfo(txData: TxInfoProps) {
 					</div>
 				</div>
 				<div className="w-60 flex flex-col items-center px-8">
-					<div className="relative w-full h-8 flex items-center overflow-hidden">
+					<div className="relative w-full h-8 flex items-center">
 						<div className="absolute inset-0 flex items-center">
 							<div className="w-full h-0.5 bg-zinc-700" />
 						</div>
