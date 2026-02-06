@@ -102,7 +102,7 @@ export const executeLiFiContractCalls = async ({
 			chainId: fromChain,
 		};
 		const transaction = await client.sendTransaction(tx);
-		return { status: "success", transactionHash: transaction };
+		return { status: "success", message: "Transaction submitted successfully", transactionHash: transaction };
 	} catch (e) {
 		console.error(e);
 		return { status: "error", message: "Failed to execute transaction, please try again later." };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { isAddress, type Address } from "viem";
-import { useConnection } from "wagmi";
+import { useChains, useConnection } from "wagmi";
 import { getWalletClient } from "wagmi/actions";
 import { useDebounce } from "./hooks/useDebouncer";
 import StringHelper from "./helpers/StringHelper";
@@ -19,6 +19,7 @@ import LogoENS from "./assets/partner-ens.svg";
 import LogoAave from "./assets/partner-aave.svg";
 
 function App() {
+	const chains = useChains();
 	const { address, chainId, isConnected } = useConnection();
 	const [menu, setMenu] = useState<string>("CONFIRM");
 	const [sourceChain, setSourceChain] = useState<Option | null>(null);
@@ -29,11 +30,17 @@ function App() {
 	const [protocol, setProtocol] = useState<string>("aave");
 	const [sameReceiver, setSameReceiver] = useState<boolean>(true);
 	const [receiverAddress, setReceiverAddress] = useState<string>("");
+	const [receiverENSName, setReceiverENSName] = useState<string | null>(null);
+	const [receiverENSAvatar, setReceiverENSAvatar] = useState<string | null>(null);
 	const [sourceBalance, setSourceBalance] = useState<string>("...");
+	const [txHash, setTxHash] = useState<string | null>(null);
+	const [txLink, setTxLink] = useState<string | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
+	const [txSuccess, setTxSuccess] = useState<string | null>(null);
 	const [searchTxHash, setSearchTxHash] = useState<string>("");
 	const [searchTxData, setSearchTxData] = useState<TxInfoProps | null>(null);
 	const [searchTxError, setSearchTxError] = useState<string | null>(null);
+	const debounceSearchTxHash = useDebounce(searchTxHash, 500);
 
 	const protocolList = () => {
 		/* const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
@@ -74,6 +81,9 @@ function App() {
 	};
 	const submitTx = async () => {
 		setTxError(null);
+		setTxSuccess(null);
+		setTxHash(null);
+		setTxLink(null);
 
 		if (!sourceChain || !destinationChain || !sourceToken || !destinationToken) {
 			alert("Please choose network & token from source chain and destination chain!");
@@ -109,6 +119,10 @@ function App() {
 			setTxError(result.message || "Transaction error, please try again later.");
 			return;
 		}
+
+		setTxSuccess(result.message);
+		setTxHash(result.transactionHash || null);
+		setTxLink(`${chains.find((c) => c.id === Number(sourceChain.value))?.blockExplorers?.default?.url}/tx/${result.transactionHash}`);
 	};
 
 	useEffect(() => {
@@ -116,7 +130,6 @@ function App() {
 		getTokenBalance(address, sourceToken.value as Address, Number(sourceChain.value)).then(setSourceBalance);
 	}, [address, sourceToken, sourceChain]);
 
-	const debounceSearchTxHash = useDebounce(searchTxHash, 500);
 	useEffect(() => {
 		if (!/^0x([A-Fa-f0-9]{64})$/.test(debounceSearchTxHash)) return;
 
@@ -137,8 +150,6 @@ function App() {
 		loadData();
 	}, [debounceSearchTxHash]);
 
-	const [receiverENSName, setReceiverENSName] = useState<string | null>(null);
-	const [receiverENSAvatar, setReceiverENSAvatar] = useState<string | null>(null);
 	useEffect(() => {
 		if (!receiverAddress) return;
 		let cancelled = false;
@@ -154,6 +165,28 @@ function App() {
 			cancelled = true;
 		};
 	}, [receiverAddress, destinationChain?.value]);
+
+	useEffect(() => {
+		if (!txSuccess) return;
+
+		const timer = setTimeout(() => {
+			setTxError(null);
+			setTxSuccess(null);
+			setTxHash(null);
+			setTxLink(null);
+			setAmounts({ source: "0", destination: "0" });
+			setProtocol("aave");
+			setSameReceiver(true);
+			setReceiverAddress("");
+			setSourceChain(null);
+			setSourceToken(null);
+			setDestinationChain(null);
+			setDestinationToken(null);
+			setSourceBalance("...");
+		}, 5000);
+
+		return () => clearTimeout(timer);
+	}, [txSuccess]);
 
 	return (
 		<div className="container">
@@ -195,12 +228,27 @@ function App() {
 									onChange={(option) => {
 										setSourceChain(option);
 										setSourceToken(null);
+										setTxError(null);
+										setTxSuccess(null);
+										setTxHash(null);
+										setTxLink(null);
 									}}
 								/>
 							</div>
 							<div className="mb-2 relative z-10">
 								<label className="font-semibold">Source token</label>
-								<SelectInput placeholder="Choose a token" options={sourceTokenList()} value={sourceToken?.value} onChange={(option) => setSourceToken(option)} />
+								<SelectInput
+									placeholder="Choose a token"
+									options={sourceTokenList()}
+									value={sourceToken?.value}
+									onChange={(option) => {
+										setSourceToken(option);
+										setTxError(null);
+										setTxSuccess(null);
+										setTxHash(null);
+										setTxLink(null);
+									}}
+								/>
 							</div>
 							<div className="mb-2">
 								<label className="font-semibold">You send</label>
@@ -222,6 +270,10 @@ function App() {
 									onChange={(option) => {
 										setDestinationChain(option);
 										setDestinationToken(null);
+										setTxError(null);
+										setTxSuccess(null);
+										setTxHash(null);
+										setTxLink(null);
 									}}
 								/>
 							</div>
@@ -232,7 +284,18 @@ function App() {
 								</div>
 								<div className="relative z-10 w-full">
 									<label className="font-semibold">Destination token</label>
-									<SelectInput placeholder="Choose a token" options={destinationTokenList()} value={destinationToken?.value} onChange={(option) => setDestinationToken(option)} />
+									<SelectInput
+										placeholder="Choose a token"
+										options={destinationTokenList()}
+										value={destinationToken?.value}
+										onChange={(option) => {
+											setDestinationToken(option);
+											setTxError(null);
+											setTxSuccess(null);
+											setTxHash(null);
+											setTxLink(null);
+										}}
+									/>
 								</div>
 							</div>
 							<div className="mb-2">
@@ -357,6 +420,14 @@ function App() {
 										</div>
 										<div className="mt-2 text-center">
 											{txError && <p className="text-sm text-red-500 font-medium italic mb-1">{txError}</p>}
+											{txSuccess && <p className="text-sm text-green-500 font-medium italic mb-1">{txSuccess}</p>}
+											{txHash && (
+												<div className="-mt-2 mb-2">
+													<a href={String(txLink)} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 underline">
+														{txHash}
+													</a>
+												</div>
+											)}
 											<button
 												className="min-w-50 border-2 py-2 px-4 rounded-xl font-semibold bg-black text-white cursor-pointer"
 												onClick={Number(sourceChain.value) != Number(chainId) ? switchChain : submitTx}
