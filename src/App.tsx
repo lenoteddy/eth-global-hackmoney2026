@@ -193,13 +193,13 @@ function App() {
 			<header>
 				<div className="py-4 flex items-center justify-between gap-x-6">
 					<div>
-						<a href="#" className="flex items-center">
+						<div className="flex items-center cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
 							<img src={Logo} alt="logo" className="w-28" />
 							<div className="ml-1">
 								<h1 className="text-xl leading-5 font-semibold">OmniDeposit</h1>
 								<p className="text-xs leading-5 font-light">Cross-Chain Deposits, Simplified.</p>
 							</div>
-						</a>
+						</div>
 					</div>
 					<div>
 						<ConnectKitButton.Custom>
