@@ -295,7 +295,6 @@ function App() {
 								<label className="font-semibold">You send</label>
 								<AmountInput max={sourceBalance} value={amounts.source} onChange={(v) => handleAmountChange("source", v)} />
 								<div className="text-sm font-semibold">Wallet Balance: {sourceBalance}</div>
-								<p className="text-sm italic">*enter either amount. The other will be calculated automatically.</p>
 							</div>
 						</div>
 					</div>
@@ -344,29 +343,31 @@ function App() {
 								<AmountInput value={amounts.destination} onChange={(v) => handleAmountChange("destination", v)} />
 								<p className="text-sm italic">*enter either amount. The other will be calculated automatically.</p>
 							</div>
-							<div className="mb-2">
-								<div className="mb-1 flex items-center justify-between">
-									<label className="font-semibold">Destination address</label>
-									<button
-										className={"px-3 py-1 text-sm rounded-lg font-medium transition " + (sameReceiver ? "bg-gray-100 text-gray-700" : "bg-black text-white")}
-										onClick={() => {
-											setSameReceiver(!sameReceiver);
-											setReceiverAddress("");
-											setReceiverENSName(null);
-											setReceiverENSAvatar(null);
-										}}
-									>
-										{sameReceiver ? "Use Different Address" : "Use Wallet Address"}
-									</button>
-								</div>
-								{sameReceiver ? (
-									<div className="w-full h-10 flex items-center justify-between rounded-xl border border-gray-300 bg-gray-100 px-4 py-2 shadow-sm text-sm hover:border-black focus:outline-none focus:ring-1 focus:ring-black transition">
-										{address}
+							{isConnected && (
+								<div className="mb-2">
+									<div className="mb-1 flex items-center justify-between">
+										<label className="font-semibold">Destination address</label>
+										<button
+											className={"px-3 py-1 text-sm rounded-lg font-medium transition " + (sameReceiver ? "bg-gray-100 text-gray-700" : "bg-black text-white")}
+											onClick={() => {
+												setSameReceiver(!sameReceiver);
+												setReceiverAddress("");
+												setReceiverENSName(null);
+												setReceiverENSAvatar(null);
+											}}
+										>
+											{sameReceiver ? "Use Different Address" : "Use Wallet Address"}
+										</button>
 									</div>
-								) : (
-									<AddressInput network={destinationChain?.value ? Number(destinationChain?.value) : 1} value={receiverAddress} onChange={setReceiverAddress} />
-								)}
-							</div>
+									{sameReceiver ? (
+										<div className="w-full h-10 flex items-center justify-between rounded-xl border border-gray-300 bg-gray-100 px-4 py-2 shadow-sm text-sm hover:border-black focus:outline-none focus:ring-1 focus:ring-black transition">
+											{address}
+										</div>
+									) : (
+										<AddressInput network={destinationChain?.value ? Number(destinationChain?.value) : 1} value={receiverAddress} onChange={setReceiverAddress} />
+									)}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
