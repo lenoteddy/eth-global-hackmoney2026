@@ -62,7 +62,6 @@ export const useTxStorage = (walletAddress: string) => {
 	return {
 		hashes,
 		addHash,
-		removeHash,
 		clear,
 	};
 };
