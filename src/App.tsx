@@ -197,7 +197,7 @@ function App() {
 											setReceiverAddress("");
 										}}
 									>
-										Change
+										{sameReceiver ? "Use Different Address" : "Use Wallet Address"}
 									</button>
 								</div>
 								{sameReceiver ? (
