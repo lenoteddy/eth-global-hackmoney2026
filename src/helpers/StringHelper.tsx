@@ -9,9 +9,27 @@ const numberFormat = (val: string) => {
 	return dec !== undefined ? `${intFormatted}.${dec}` : intFormatted;
 };
 
+function timestampFormat(timestamp: number) {
+	const date = new Date(timestamp * 1000);
+	const datePart = new Intl.DateTimeFormat("en-GB", {
+		day: "2-digit",
+		month: "short",
+		year: "numeric",
+		timeZone: "UTC",
+	}).format(date);
+	const timePart = new Intl.DateTimeFormat("en-GB", {
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false,
+		timeZone: "UTC",
+	}).format(date);
+	return `${datePart} (${timePart} UTC)`;
+}
+
 const StringHelper = {
 	shortHex,
 	numberFormat,
+	timestampFormat,
 };
 
 export default StringHelper;
