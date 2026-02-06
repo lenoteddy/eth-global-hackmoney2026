@@ -17,7 +17,7 @@ import LogoENS from "./assets/partner-ens.svg";
 import LogoAave from "./assets/partner-aave.svg";
 
 function App() {
-	const { address, chainId } = useConnection();
+	const { address, chainId, isConnected } = useConnection();
 	const [menu, setMenu] = useState<string>("CONFIRM");
 	const [sourceChain, setSourceChain] = useState<Option | null>(null);
 	const [sourceToken, setSourceToken] = useState<Option | null>(null);
@@ -111,7 +111,7 @@ function App() {
 							<img src={Logo} alt="logo" className="w-28" />
 							<div className="ml-1">
 								<h1 className="text-xl leading-5 font-semibold">OmniDeposit</h1>
-								<p className="text-xs leading-5 font-light">Seamless Cross-Chain Asset Deposits</p>
+								<p className="text-xs leading-5 font-light">Cross-Chain Deposits, Simplified.</p>
 							</div>
 						</a>
 					</div>
@@ -233,7 +233,21 @@ function App() {
 						</button>
 					</div>
 					<div className="border rounded-tl-none rounded-lg p-4 shadow-[.3rem_.3rem_0_0_#000000]">
-						{menu === "CONFIRM" && (
+						{!isConnected && (
+							<div className="p-8 text-center">
+								<div className="text-lg font-semibold">Please connect your wallet</div>
+								<ConnectKitButton.Custom>
+									{({ show, isConnected, address }) => {
+										return (
+											<button className="border-2 py-2 px-4 rounded-xl text-sm font-semibold bg-black text-white cursor-pointer" onClick={show}>
+												{isConnected && address ? StringHelper.shortHex(address) : "Connect Wallet"}
+											</button>
+										);
+									}}
+								</ConnectKitButton.Custom>
+							</div>
+						)}
+						{isConnected && menu === "CONFIRM" && (
 							<div>
 								<h3 className="mb-2 text-xl font-semibold">Confirm Transaction</h3>
 								{!sourceChain || !destinationChain || !sourceToken || !destinationToken || (Number(amounts.source) <= 0 && Number(amounts.destination) <= 0) ? (
@@ -289,7 +303,7 @@ function App() {
 								)}
 							</div>
 						)}
-						{menu === "HISTORY" && (
+						{isConnected && menu === "HISTORY" && (
 							<div>
 								<div></div>
 							</div>
