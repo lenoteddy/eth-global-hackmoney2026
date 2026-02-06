@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
-import { isAddress } from "viem";
+import { isAddress, type Address } from "viem";
 import { useConnection } from "wagmi";
 import StringHelper from "./helpers/StringHelper";
 import { chainList, wagmiConfig } from "./helpers/Web3Config";
-import { executeLiFiContractCalls } from "./helpers/Web3Helper";
+import { executeLiFiContractCalls, getTokenBalance } from "./helpers/Web3Helper";
 import SelectInput, { type Option } from "./components/SelectInput";
 import AmountInput from "./components/AmountInput";
 import { AddressInput } from "./components/AddressInput";
@@ -23,6 +23,7 @@ function App() {
 	const [protocol, setProtocol] = useState<string>("aave");
 	const [sameReceiver, setSameReceiver] = useState<boolean>(true);
 	const [receiverAddress, setReceiverAddress] = useState<string>("");
+	const [sourceBalance, setSourceBalance] = useState<string>("...");
 	const protocolList = () => {
 		/* const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
 		const newList = list.map((val) => ({
@@ -92,6 +93,11 @@ function App() {
 		});
 	};
 
+	useEffect(() => {
+		if (!address || !sourceToken || !sourceChain) return;
+		getTokenBalance(address, sourceToken.value as Address, Number(sourceChain.value)).then(setSourceBalance);
+	}, [address, sourceToken, sourceChain]);
+
 	return (
 		<div className="container">
 			<header>
@@ -142,6 +148,7 @@ function App() {
 							<div className="mb-2">
 								<label className="font-semibold">You send</label>
 								<AmountInput value={amounts.source} onChange={(v) => handleAmountChange("source", v)} />
+								<div className="text-sm font-semibold">Wallet Balance: {sourceBalance}</div>
 								<p className="text-sm italic">*enter either amount. The other will be calculated automatically.</p>
 							</div>
 						</div>

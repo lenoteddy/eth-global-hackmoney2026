@@ -1,7 +1,8 @@
-import { encodeFunctionData } from "viem";
+import { encodeFunctionData, erc20Abi, formatUnits } from "viem";
+import type { Address } from "viem";
 import aaveABI from "../constants/aave-abi.json";
 import { getContractCallsQuote, setTokenAllowance } from "@lifi/sdk";
-import { getWalletClient } from "wagmi/actions";
+import { getPublicClient, getWalletClient } from "wagmi/actions";
 import { wagmiConfig } from "./Web3Config";
 import data from "../constants/chain-data.json";
 
@@ -105,3 +106,23 @@ export const executeLiFiContractCalls = async ({
 	const transaction = await client.sendTransaction(tx);
 	console.log("Transaction:", transaction);
 };
+
+export async function getTokenBalance(userAddress: Address, tokenAddress: Address, chainId: number): Promise<string> {
+	const publicClient = getPublicClient(wagmiConfig, { chainId });
+	if (!publicClient) throw new Error("Failed to get public client");
+
+	const [balance, decimals] = await Promise.all([
+		publicClient.readContract({
+			address: tokenAddress,
+			abi: erc20Abi,
+			functionName: "balanceOf",
+			args: [userAddress],
+		}),
+		publicClient.readContract({
+			address: tokenAddress,
+			abi: erc20Abi,
+			functionName: "decimals",
+		}),
+	]);
+	return formatUnits(balance, decimals);
+}
