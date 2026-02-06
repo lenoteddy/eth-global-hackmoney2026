@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { ConnectKitButton } from "connectkit";
+import { isAddress } from "viem";
 import { useConnection } from "wagmi";
 import StringHelper from "./helpers/StringHelper";
 import { chainList } from "./helpers/Web3Config";
 import { executeLiFiContractCalls } from "./helpers/Web3Helper";
 import SelectInput, { type Option } from "./components/SelectInput";
 import AmountInput from "./components/AmountInput";
+import { AddressInput } from "./components/AddressInput";
 import data from "./constants/chain-data.json";
 import Logo from "./assets/logo.png";
 
@@ -18,6 +20,7 @@ function App() {
 	const [destinationToken, setDestinationToken] = useState<Option | null>(null);
 	const [amounts, setAmounts] = useState({ source: "0", destination: "0" });
 	const [protocol, setProtocol] = useState<string>("aave");
+	const [receiverAddress, setReceiverAddress] = useState<string>("");
 	const protocolList = () => {
 		/* const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
 		const newList = list.map((val) => ({
@@ -68,10 +71,11 @@ function App() {
 		);
 		const fromAmount = Number(amounts.source) * 10 ** Number(fromTokenData?.decimals);
 		const toAmount = Number(amounts.destination) * 10 ** Number(toTokenData?.decimals);
+		const toAddress = isAddress(receiverAddress) ? receiverAddress : address;
 
 		await executeLiFiContractCalls({
 			fromAddress: String(address),
-			toAddress: String(address),
+			toAddress: String(toAddress),
 			fromChain: String(sourceChain.value),
 			toChain: String(destinationChain.value),
 			fromToken: String(sourceToken.value),
@@ -149,6 +153,10 @@ function App() {
 								<label className="font-semibold">You receive (estimated)</label>
 								<AmountInput value={amounts.destination} onChange={(v) => handleAmountChange("destination", v)} />
 								<p className="text-sm italic">*enter either amount. The other will be calculated automatically.</p>
+							</div>
+							<div className="mb-2">
+								<label className="font-semibold">Destination address</label>
+								<AddressInput network={destinationChain?.value ? Number(destinationChain?.value) : 1} value={receiverAddress} onChange={setReceiverAddress} />
 							</div>
 						</div>
 					</div>
