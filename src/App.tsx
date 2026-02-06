@@ -3,12 +3,14 @@ import { ConnectKitButton } from "connectkit";
 import { isAddress, type Address } from "viem";
 import { useConnection } from "wagmi";
 import { getWalletClient } from "wagmi/actions";
+import { useDebounce } from "./hooks/useDebouncer";
 import StringHelper from "./helpers/StringHelper";
 import { chainList, wagmiConfig } from "./helpers/Web3Config";
-import { executeLiFiContractCalls, getTokenBalance } from "./helpers/Web3Helper";
+import { checkLiFiTransaction, executeLiFiContractCalls, getTokenBalance } from "./helpers/Web3Helper";
 import SelectInput, { type Option } from "./components/SelectInput";
 import AmountInput from "./components/AmountInput";
 import { AddressInput } from "./components/AddressInput";
+import TxInfo, { type TxInfoProps } from "./components/TxInfo";
 import data from "./constants/chain-data.json";
 import Logo from "./assets/logo.png";
 import LogoETHGlobal from "./assets/partner-eth-global.svg";
@@ -28,6 +30,11 @@ function App() {
 	const [sameReceiver, setSameReceiver] = useState<boolean>(true);
 	const [receiverAddress, setReceiverAddress] = useState<string>("");
 	const [sourceBalance, setSourceBalance] = useState<string>("...");
+	const [txError, setTxError] = useState<string | null>(null);
+	const [searchTxHash, setSearchTxHash] = useState<string>("");
+	const [searchTxData, setSearchTxData] = useState<TxInfoProps | null>(null);
+	const [searchTxError, setSearchTxError] = useState<string | null>(null);
+
 	const protocolList = () => {
 		/* const list = destinationChain ? data[destinationChain as keyof typeof data].protocols : [];
 		const newList = list.map((val) => ({
@@ -66,6 +73,8 @@ function App() {
 		await client.switchChain({ id: Number(sourceChain?.value) });
 	};
 	const submitTx = async () => {
+		setTxError(null);
+
 		if (!sourceChain || !destinationChain || !sourceToken || !destinationToken) {
 			alert("Please choose network & token from source chain and destination chain!");
 			return;
@@ -84,7 +93,7 @@ function App() {
 		const toAmount = Number(amounts.destination) * 10 ** Number(toTokenData?.decimals);
 		const toAddress = isAddress(receiverAddress) ? receiverAddress : address;
 
-		await executeLiFiContractCalls({
+		const result = await executeLiFiContractCalls({
 			fromAddress: String(address),
 			toAddress: String(toAddress),
 			fromChain: String(sourceChain.value),
@@ -95,12 +104,38 @@ function App() {
 			toAmount: String(toAmount),
 			protocol: protocol,
 		});
+
+		if (result.status === "error") {
+			setTxError(result.message || "Transaction error, please try again later.");
+			return;
+		}
 	};
 
 	useEffect(() => {
 		if (!address || !sourceToken || !sourceChain) return;
 		getTokenBalance(address, sourceToken.value as Address, Number(sourceChain.value)).then(setSourceBalance);
 	}, [address, sourceToken, sourceChain]);
+
+	const debounceSearchTxHash = useDebounce(searchTxHash, 500);
+	useEffect(() => {
+		if (!/^0x([A-Fa-f0-9]{64})$/.test(debounceSearchTxHash)) return;
+
+		const loadData = async () => {
+			try {
+				const data = await checkLiFiTransaction({ txHash: debounceSearchTxHash });
+				if (data.transactionId) {
+					setSearchTxData(data);
+					setSearchTxError(null);
+				} else {
+					setSearchTxData(null);
+					setSearchTxError(data.message || "Transaction not found");
+				}
+			} catch (err) {
+				console.error(err);
+			}
+		};
+		loadData();
+	}, [debounceSearchTxHash]);
 
 	return (
 		<div className="container">
@@ -292,6 +327,7 @@ function App() {
 											<div className="py-1 px-2 border rounded-lg">{isAddress(receiverAddress) ? receiverAddress : address}</div>
 										</div>
 										<div className="mt-2 text-center">
+											{txError && <p className="text-sm text-red-500 font-medium italic mb-1">{txError}</p>}
 											<button
 												className="min-w-50 border-2 py-2 px-4 rounded-xl font-semibold bg-black text-white cursor-pointer"
 												onClick={Number(sourceChain.value) != Number(chainId) ? switchChain : submitTx}
@@ -305,7 +341,21 @@ function App() {
 						)}
 						{isConnected && menu === "HISTORY" && (
 							<div>
-								<div></div>
+								<div className="mb-2">
+									<h3 className="mb-2 text-xl font-semibold">Check Transaction</h3>
+									<input
+										value={searchTxHash}
+										onChange={(e) => setSearchTxHash(e.target.value)}
+										placeholder="0x..."
+										className="w-full flex items-center justify-between rounded-xl border border-gray-300 bg-white px-4 py-2 shadow-sm hover:border-black focus:outline-none focus:ring-1 focus:ring-black transition"
+									/>
+									{searchTxError && <p className="text-sm text-red-500 font-medium italic">{searchTxError}</p>}
+								</div>
+								{searchTxData && (
+									<div className="fade-in">
+										<TxInfo {...searchTxData} />
+									</div>
+								)}
 							</div>
 						)}
 					</div>

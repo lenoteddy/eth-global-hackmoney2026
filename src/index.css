@@ -1,8 +1,48 @@
 @import "tailwindcss";
 
+@keyframes arrowMove {
+  0% {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(160px); /* slightly wider than w-40 container */
+    opacity: 0;
+  }
+}
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+@keyframes bounce {
+	0%, 80%, 100% {
+		transform: scale(0);
+		opacity: 0.3;
+	}
+	40% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
 .container {
 	width: 100%;
 	max-width: 1024px;
 	margin: 0 auto;
 	padding: 0 2rem;
+}
+.fade-in {
+	animation: fadeIn 0.2s ease;
+}
+.arrow-move {
+	animation: arrowMove 1.5s linear infinite;
 }
