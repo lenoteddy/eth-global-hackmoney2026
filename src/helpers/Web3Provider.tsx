@@ -1,8 +1,7 @@
 import { ChainType, getChains } from "@lifi/sdk";
 import { useSyncWagmiConfig } from "@lifi/wallet-management";
 import { type FC, type PropsWithChildren } from "react";
-import type { CreateConnectorFn } from "wagmi";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, type CreateConnectorFn } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { useQuery } from "@tanstack/react-query";
 import { config, wagmiConfig } from "./Web3Config";

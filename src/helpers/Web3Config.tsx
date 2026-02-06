@@ -3,8 +3,7 @@ import { getWalletClient, switchChain } from "@wagmi/core";
 import { ChainIcon } from "connectkit";
 import { createClient, http } from "viem";
 import { arbitrum, mainnet } from "viem/chains";
-import type { Config } from "wagmi";
-import { createConfig as createWagmiConfig } from "wagmi";
+import { createConfig as createWagmiConfig, type Config } from "wagmi";
 
 export const chainList = [
 	{ label: mainnet.name, value: String(mainnet.id), icon: <ChainIcon id={mainnet.id} /> },
