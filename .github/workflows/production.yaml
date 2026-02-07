@@ -26,7 +26,7 @@ jobs:
 
             - name: 🔨 Install Dependencies & Build
               run: |
-                  npm ci
+                  npm ci --legacy-peer-deps
                   npm run build
                   mv .htaccess dist/.htaccess
 
